@@ -5,10 +5,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { 
   Send, Paperclip, Mic, Image as ImageIcon, 
   Settings2, Bot, User, StopCircle, RefreshCw, 
-  Copy, Share, FileText, ChevronRight, ChevronLeft
+  Copy, Share, FileText, ChevronRight, ChevronLeft,
+  Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/input"; // We'll use a standard textarea for now, styled with tailwind
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { apiClient } from "@/lib/api-client";
@@ -55,9 +55,8 @@ export default function ChatPage() {
 
     try {
       // Connect to existing backend chat API
-      const res = await apiClient.post("/chat/message", { message: userMessage.content }).catch(() => null);
-      
-      const reply = res?.data?.reply || "I've analyzed your request. Based on our current marketing data, we should increase ad spend on the top performing channels. Would you like me to draft a new campaign?";
+      const res = await apiClient.post("/chat/message", { message: userMessage.content });
+      const reply = res.data.reply;
       
       // Simulate streaming
       let currentText = "";

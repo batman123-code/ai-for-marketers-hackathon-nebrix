@@ -50,6 +50,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     settings = get_settings()
     logger.info("Starting %s v%s (%s)", settings.APP_NAME, settings.APP_VERSION, settings.APP_ENV)
 
+    # Initialize fallback SQLite database if Supabase is not set up
+    from database.db_service import db_service
+    
     if not settings.supabase_configured:
         logger.warning("Supabase is not configured. Set SUPABASE_URL and SUPABASE_ANON_KEY in .env")
 
@@ -95,6 +98,7 @@ from backend.routes.dashboard import router as dashboard_router
 from backend.routes.chat import router as chat_router
 from backend.routes.analytics import router as analytics_router
 from backend.routes.reports import router as reports_router
+from backend.routes.customers import router as customers_router
 
 API_PREFIX = settings.API_PREFIX
 
@@ -104,6 +108,7 @@ app.include_router(dashboard_router, prefix=API_PREFIX)
 app.include_router(chat_router, prefix=API_PREFIX)
 app.include_router(analytics_router, prefix=API_PREFIX)
 app.include_router(reports_router, prefix=API_PREFIX)
+app.include_router(customers_router, prefix=API_PREFIX)
 
 # ---------------------------------------------------------------------------
 # Health Endpoint

@@ -152,3 +152,29 @@ def validate_file_size(size_bytes: int, max_size_mb: int = 50) -> bool:
     """Check that file size is within allowed limit."""
     max_bytes = max_size_mb * 1024 * 1024
     return 0 < size_bytes <= max_bytes
+
+
+class ProfileUpdateRequest(BaseModel):
+    """Request body for POST /auth/profile."""
+    full_name: str = Field(..., min_length=1, max_length=200)
+
+
+class CompanyUpdateRequest(BaseModel):
+    """Request body for POST /auth/company."""
+    name: str = Field(..., min_length=1, max_length=200)
+    industry: str = Field(default="", max_length=200)
+    website: str = Field(default="", max_length=200)
+
+
+class ReportGenerateRequest(BaseModel):
+    """Request body for POST /reports/generate."""
+    report_type: str = Field(..., min_length=1, max_length=50)
+    title: str = Field(default="", max_length=200)
+
+
+class ChatMessageRequest(BaseModel):
+    """Request body for POST /chat/message."""
+    message: str = Field(..., min_length=1)
+
+
+

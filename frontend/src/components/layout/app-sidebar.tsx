@@ -28,6 +28,7 @@ import {
   Search,
   Bell,
   Sparkles,
+  Users,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -38,6 +39,7 @@ const mainNavigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
   { name: "AI Assistant", href: "/chat", icon: Bot },
   { name: "Campaigns", href: "/campaigns", icon: Briefcase },
+  { name: "Customers", href: "/customers", icon: Users },
   { name: "Analytics", href: "/analytics", icon: BarChart },
   { name: "Reports", href: "/reports", icon: FileText },
   { name: "Content Studio", href: "/content-studio", icon: PenTool },
