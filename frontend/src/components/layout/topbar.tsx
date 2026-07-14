@@ -17,15 +17,21 @@ export function Topbar() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase.auth.getSession().then((res: any) => {
-      setSession(res.data?.session || null);
-      setIsLoading(false);
-    });
+    supabase.auth.getSession()
+      .then((res: any) => {
+        setSession(res.data?.session || null);
+        setIsLoading(false);
+      })
+      .catch((err) => {
+        console.error("Topbar session error:", err);
+        setIsLoading(false);
+      });
 
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
       setSession(session);
+      setIsLoading(false); // Ensure topbar stops loading on auth state change
     });
 
     return () => subscription.unsubscribe();

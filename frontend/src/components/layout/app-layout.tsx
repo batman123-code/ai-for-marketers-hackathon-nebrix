@@ -14,26 +14,46 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // 1. Fetch current session from Supabase SDK
-    supabase.auth.getSession().then(({ data: { session } }: any) => {
-      setSession(session);
-      setIsLoading(false);
-      if (!session) {
-        localStorage.removeItem("token");
-        router.push("/login");
+    let mounted = true;
+
+    async function checkSession() {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+        if (error) throw error;
+        
+        if (mounted) {
+          setSession(session);
+          setIsLoading(false);
+          if (!session) {
+            localStorage.removeItem("token");
+            router.push("/login");
+          }
+        }
+      } catch (err) {
+        console.error("Session check failed:", err);
+        if (mounted) {
+          setIsLoading(false);
+          router.push("/login");
+        }
       }
-    });
+    }
+
+    checkSession();
 
     // 2. Setup observer to handle dynamic logouts/expiry
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, currentSession: any) => {
-      setSession(currentSession);
-      if (!currentSession) {
-        localStorage.removeItem("token");
-        router.push("/login");
+      if (mounted) {
+        setSession(currentSession);
+        setIsLoading(false); // <--- CRITICAL FIX: Ensure loading spinner stops
+        if (!currentSession) {
+          localStorage.removeItem("token");
+          router.push("/login");
+        }
       }
     });
 
     return () => {
+      mounted = false;
       subscription.unsubscribe();
     };
   }, [router]);
