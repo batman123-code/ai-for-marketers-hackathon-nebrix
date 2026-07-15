@@ -14,53 +14,48 @@ export default function CampaignsPage() {
   ];
 
   return (
-    <div className="flex-1 flex flex-col h-[calc(100vh-6rem)]">
-      <div className="flex items-center justify-between mb-6">
+    <div className="flex h-[calc(100vh-6rem)] flex-1 flex-col">
+      <div className="mb-6 flex flex-col gap-4 rounded-[32px] border border-border bg-card p-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Campaigns</h2>
-          <p className="text-muted-foreground mt-1">Manage your marketing campaigns in a kanban board.</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">Operations</p>
+          <h2 className="mt-2 text-3xl font-medium tracking-[-0.02em] text-foreground">Campaigns</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Manage your marketing campaigns in a calm kanban board.</p>
         </div>
-        <Button>
+        <Button className="rounded-full">
           <Plus className="mr-2 h-4 w-4" />
           New Campaign
         </Button>
       </div>
 
-      <div className="flex-1 overflow-x-auto custom-scrollbar pb-4">
-        <div className="flex gap-6 h-full min-w-max">
+      <div className="flex-1 overflow-x-auto pb-4">
+        <div className="flex h-full min-w-max gap-6">
           {columns.map((col, i) => (
-            <motion.div 
-              key={col.title}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: i * 0.1 }}
-              className="w-80 flex flex-col gap-4"
-            >
+            <motion.div key={col.title} initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.1 }} className="flex w-80 flex-col gap-4">
               <div className="flex items-center justify-between px-1">
-                <h3 className="font-semibold">{col.title}</h3>
-                <span className="bg-muted px-2 py-0.5 rounded-full text-xs font-medium">{col.items.length}</span>
+                <h3 className="font-semibold text-foreground">{col.title}</h3>
+                <span className="rounded-full border border-border/80 bg-background px-2.5 py-0.5 text-xs font-medium text-muted-foreground">{col.items.length}</span>
               </div>
-              
-              <div className="flex-1 space-y-3 bg-muted/10 rounded-2xl p-2 border border-border/30">
+
+              <div className="flex-1 space-y-3 rounded-[28px] border border-border/80 bg-background/70 p-2">
                 {col.items.map((item, j) => (
-                  <Card key={j} className="bg-card/80 backdrop-blur-sm border-border/50 hover:border-primary/50 cursor-grab active:cursor-grabbing transition-colors shadow-sm">
+                  <Card key={j} className="cursor-grab active:cursor-grabbing transition-colors hover:border-primary/40">
                     <CardHeader className="p-4 pb-2">
-                      <div className="flex justify-between items-start">
-                        <div className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full mb-2">Campaign</div>
-                        <Button variant="ghost" size="icon" className="h-6 w-6 -mt-1 -mr-2 text-muted-foreground">
+                      <div className="flex items-start justify-between">
+                        <div className="mb-2 rounded-full bg-primary/15 px-2.5 py-1 text-[11px] font-medium uppercase tracking-[0.2em] text-primary">Campaign</div>
+                        <Button variant="ghost" size="icon" className="-mr-2 -mt-1 h-6 w-6 text-muted-foreground">
                           <MoreHorizontal className="h-4 w-4" />
                         </Button>
                       </div>
                       <CardTitle className="text-base font-semibold">{item}</CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">
-                      <div className="flex items-center justify-between mt-4 pt-3 border-t border-border/50 text-xs text-muted-foreground">
+                      <div className="mt-4 flex items-center justify-between border-t border-border/80 pt-3 text-xs text-muted-foreground">
                         <div className="flex items-center">
                           <Calendar className="mr-1 h-3 w-3" />
                           Oct 24 - Nov 15
                         </div>
-                        <div className="flex items-center text-primary font-medium group cursor-pointer">
-                          View <ArrowRight className="ml-1 h-3 w-3 group-hover:translate-x-1 transition-transform" />
+                        <div className="flex items-center font-medium text-primary">
+                          View <ArrowRight className="ml-1 h-3 w-3" />
                         </div>
                       </div>
                     </CardContent>

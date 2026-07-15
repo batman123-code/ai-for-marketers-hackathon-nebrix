@@ -11,8 +11,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <AppSidebar />
         <div className="flex flex-1 flex-col transition-all duration-300 ease-in-out">
           <Topbar />
-          <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto">
-            {children}
+          <main className="flex-1 overflow-y-auto bg-transparent p-4 sm:p-6 lg:p-8">
+            <div className="mx-auto flex max-w-7xl flex-col gap-6">{children}</div>
           </main>
         </div>
       </div>
