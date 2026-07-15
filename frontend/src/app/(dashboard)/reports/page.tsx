@@ -61,55 +61,11 @@ export default function ReportsPage() {
     <div className="flex-1 space-y-6">
       <div className="flex flex-col gap-4 rounded-[32px] border border-border bg-card p-6 sm:flex-row sm:items-end sm:justify-between">
         <div>
-<<<<<<< HEAD
           <p className="text-[11px] font-semibold uppercase tracking-[0.25em] text-muted-foreground">Deliverables</p>
-          <h2 className="mt-2 text-3xl font-medium tracking-[-0.02em] text-foreground">Reports</h2>
-          <p className="mt-2 text-sm leading-6 text-muted-foreground">Generate, view, and export your marketing reports.</p>
+          <h2 className="mt-2 text-3xl font-medium tracking-[-0.02em] text-foreground">AI Reports</h2>
+          <p className="mt-2 text-sm leading-6 text-muted-foreground">Compile AI-powered executive performance recommendations.</p>
         </div>
-        <Button className="rounded-full">
-          <Plus className="mr-2 h-4 w-4" />
-          New Report
-        </Button>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        {reports.map((report, i) => (
-          <motion.div key={report.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4, delay: i * 0.1 }}>
-            <Card className="flex h-full flex-col transition-all duration-300 hover:-translate-y-0.5">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="rounded-2xl border border-border/80 bg-background p-2">
-                    <FileText className="h-5 w-5 text-primary" />
-                  </div>
-                  <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${report.status === "Ready" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
-                    {report.status}
-                  </span>
-                </div>
-                <CardTitle className="mt-4 text-lg">{report.name}</CardTitle>
-                <CardDescription>Generated on {report.date}</CardDescription>
-              </CardHeader>
-              <CardContent className="flex-1">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <File className="h-4 w-4" />
-                  {report.type} Format
-                </div>
-              </CardContent>
-              <CardFooter className="gap-2 border-t border-border/80 pt-3">
-                <Button variant="outline" size="sm" className="w-full rounded-full" disabled={report.status !== "Ready"}>
-                  <Download className="mr-2 h-3 w-3" /> Export
-                </Button>
-                <Button variant="outline" size="sm" className="w-full rounded-full" disabled={report.status !== "Ready"}>
-                  <Share2 className="mr-2 h-3 w-3" /> Share
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
-        ))}
-=======
-          <h2 className="text-3xl font-bold tracking-tight">AI Reports</h2>
-          <p className="text-muted-foreground mt-1">Compile AI-powered executive performance recommendations.</p>
-        </div>
-        <Button onClick={() => generateMutation.mutate()} disabled={generateMutation.isPending}>
+        <Button onClick={() => generateMutation.mutate()} disabled={generateMutation.isPending} className="rounded-full">
           {generateMutation.isPending ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -172,7 +128,7 @@ export default function ReportsPage() {
                       </div>
                     </CardContent>
                     <CardFooter className="pt-3 border-t border-border/40 gap-2">
-                      <Button variant="outline" size="sm" className="w-full bg-background/50 text-xs h-8">
+                      <Button variant="outline" size="sm" className="w-full bg-background/50 text-xs h-8 rounded-full">
                         <BookOpen className="mr-1.5 h-3.5 w-3.5" /> View Insights
                       </Button>
                     </CardFooter>
@@ -199,7 +155,7 @@ export default function ReportsPage() {
                   </div>
                 </CardContent>
                 <CardFooter className="border-t border-border/40 p-3 bg-muted/10 flex gap-2">
-                  <Button variant="secondary" className="w-full text-xs h-8" onClick={() => {
+                  <Button variant="secondary" className="w-full text-xs h-8 rounded-full" onClick={() => {
                     const blob = new Blob([selectedReport.content?.markdown || ""], { type: "text/markdown" });
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
@@ -218,7 +174,6 @@ export default function ReportsPage() {
             )}
           </div>
         </div>
->>>>>>> bf37c5909541ae5551f45803b9cfd61427c7bb43
       </div>
     </div>
   );

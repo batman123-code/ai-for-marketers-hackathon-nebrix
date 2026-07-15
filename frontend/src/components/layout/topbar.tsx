@@ -17,16 +17,6 @@ export function Topbar() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-<<<<<<< HEAD
-    supabase.auth.getSession().then(({ data: { session } }: { data: { session: any } }) => {
-      setSession(session);
-      setIsLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-=======
     supabase.auth.getSession()
       .then((res: any) => {
         setSession(res.data?.session || null);
@@ -40,7 +30,6 @@ export function Topbar() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: string, session: any) => {
->>>>>>> bf37c5909541ae5551f45803b9cfd61427c7bb43
       setSession(session);
       setIsLoading(false); // Ensure topbar stops loading on auth state change
     });

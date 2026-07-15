@@ -59,20 +59,6 @@ export default function AnalyticsPage() {
             <CardDescription>Compare organic vs paid traffic over time.</CardDescription>
           </CardHeader>
           <CardContent>
-<<<<<<< HEAD
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#d2d2c8" vertical={false} />
-                  <XAxis dataKey="name" stroke="#6e6e64" tickLine={false} axisLine={false} />
-                  <YAxis stroke="#6e6e64" tickLine={false} axisLine={false} />
-                  <Tooltip contentStyle={{ backgroundColor: '#ffffff', border: '1px solid #d2d2c8', borderRadius: '16px' }} cursor={{ fill: 'rgba(190,255,80,0.08)' }} />
-                  <Bar dataKey="organic" stackId="a" fill="#beff50" radius={[0, 0, 8, 8]} />
-                  <Bar dataKey="paid" stackId="a" fill="#14140f" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-=======
             {isLoading ? (
               <div className="h-[400px] flex items-center justify-center">
                 <div className="h-8 w-8 border-4 border-primary border-t-transparent animate-spin rounded-full" />
@@ -94,7 +80,6 @@ export default function AnalyticsPage() {
                 </ResponsiveContainer>
               </div>
             )}
->>>>>>> bf37c5909541ae5551f45803b9cfd61427c7bb43
           </CardContent>
         </Card>
       </motion.div>

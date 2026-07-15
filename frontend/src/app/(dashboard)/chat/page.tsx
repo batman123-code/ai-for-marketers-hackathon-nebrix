@@ -2,26 +2,11 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-<<<<<<< HEAD
-import {
-  Send,
-  Paperclip,
-  Mic,
-  Image as ImageIcon,
-  StopCircle,
-  RefreshCw,
-  Copy,
-  FileText,
-  ChevronRight,
-  ChevronLeft,
-  Sparkles,
-=======
 import { 
   Send, Paperclip, Mic, Image as ImageIcon, 
   Settings2, Bot, User, StopCircle, RefreshCw, 
   Copy, Share, FileText, ChevronRight, ChevronLeft,
   Sparkles
->>>>>>> bf37c5909541ae5551f45803b9cfd61427c7bb43
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
