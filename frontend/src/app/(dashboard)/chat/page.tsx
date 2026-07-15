@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+<<<<<<< HEAD
 import {
   Send,
   Paperclip,
@@ -14,6 +15,13 @@ import {
   ChevronRight,
   ChevronLeft,
   Sparkles,
+=======
+import { 
+  Send, Paperclip, Mic, Image as ImageIcon, 
+  Settings2, Bot, User, StopCircle, RefreshCw, 
+  Copy, Share, FileText, ChevronRight, ChevronLeft,
+  Sparkles
+>>>>>>> bf37c5909541ae5551f45803b9cfd61427c7bb43
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -62,9 +70,8 @@ export default function ChatPage() {
 
     try {
       // Connect to existing backend chat API
-      const res = await apiClient.post("/chat/message", { message: userMessage.content }).catch(() => null);
-      
-      const reply = res?.data?.reply || "I've analyzed your request. Based on our current marketing data, we should increase ad spend on the top performing channels. Would you like me to draft a new campaign?";
+      const res = await apiClient.post("/chat/message", { message: userMessage.content });
+      const reply = res.data.reply;
       
       // Simulate streaming
       let currentText = "";

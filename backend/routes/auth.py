@@ -18,6 +18,8 @@ from backend.utils.validators import (
     SendOTPRequest,
     SignupRequest,
     VerifyOTPRequest,
+    ProfileUpdateRequest,
+    CompanyUpdateRequest,
 )
 
 logger = logging.getLogger("memoryos.auth")
@@ -208,3 +210,103 @@ async def reset_password(body: ResetPasswordRequest) -> dict:
         )
 
     return {"success": True, "message": result.message}
+
+
+# ---------------------------------------------------------------------------
+# POST /auth/profile
+# ---------------------------------------------------------------------------
+
+@router.post(
+    "/profile",
+    response_model=AuthResponse,
+    summary="Update user profile information",
+)
+async def update_profile(body: ProfileUpdateRequest, user: CurrentUser) -> dict:
+    """Update display name and other metadata of the authenticated user."""
+    from database.db_service import db_service
+    user_id = user.get("id") or user.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid access token",
+        )
+
+    db_service.provision_user_and_company(user_id, user.get("email", ""))
+    success = db_service.execute_write(
+        "UPDATE profiles SET full_name = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        (body.full_name, user_id)
+    )
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update user profile",
+        )
+    return {"success": True, "message": "Profile updated successfully"}
+
+
+# ---------------------------------------------------------------------------
+# GET /auth/company
+# ---------------------------------------------------------------------------
+
+@router.get(
+    "/company",
+    response_model=AuthResponse,
+    summary="Get active company details",
+)
+async def get_company(user: CurrentUser) -> dict:
+    """Retrieve settings and name for the user's company."""
+    from database.db_service import db_service
+    user_id = user.get("id") or user.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid access token",
+        )
+
+    prov = db_service.provision_user_and_company(user_id, user.get("email", ""))
+    company_id = prov["company_id"]
+    companies = db_service.execute_query("SELECT * FROM companies WHERE id = ?", (company_id,))
+    if not companies:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Company record not found",
+        )
+    return {
+        "success": True,
+        "message": "Company details retrieved",
+        "data": companies[0],
+    }
+
+
+# ---------------------------------------------------------------------------
+# POST /auth/company
+# ---------------------------------------------------------------------------
+
+@router.post(
+    "/company",
+    response_model=AuthResponse,
+    summary="Update active company details",
+)
+async def update_company(body: CompanyUpdateRequest, user: CurrentUser) -> dict:
+    """Update settings and name for the user's company."""
+    from database.db_service import db_service
+    user_id = user.get("id") or user.get("sub")
+    if not user_id:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid access token",
+        )
+
+    prov = db_service.provision_user_and_company(user_id, user.get("email", ""))
+    company_id = prov["company_id"]
+    success = db_service.execute_write(
+        "UPDATE companies SET name = ?, industry = ?, website = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?",
+        (body.name, body.industry, body.website, company_id)
+    )
+    if not success:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to update company record",
+        )
+    return {"success": True, "message": "Company details updated successfully"}
+
