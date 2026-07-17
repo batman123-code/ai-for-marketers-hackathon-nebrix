@@ -73,8 +73,9 @@ export default function ChatPage() {
       setMessages(prev => 
         prev.map(m => m.id === assistantMessageId ? { ...m, isStreaming: false } : m)
       );
-    } catch (error) {
-      toast.error("Failed to generate response");
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.detail || error.message || "Failed to generate response";
+      toast.error(errorMsg);
       setMessages(prev => prev.filter(m => m.id !== assistantMessageId));
     } finally {
       setIsGenerating(false);

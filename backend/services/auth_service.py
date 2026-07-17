@@ -313,11 +313,12 @@ class AuthService:
         try:
             client = self._get_client()
             # Set the session so Supabase can identify the user
-            await asyncio.to_thread(client.auth.set_session, access_token, "")
-            response = await asyncio.to_thread(client.auth.get_user)
+            response = await asyncio.to_thread(client.auth.get_user, jwt=access_token)
+            logger.info(f"get_user response type: {type(response)}, dir: {dir(response)}")
 
-            if response and response.user:
-                user = _user_to_dict(response.user)
+            user_obj = getattr(response, "user", response)
+            if user_obj and hasattr(user_obj, "id"):
+                user = _user_to_dict(user_obj)
                 return AuthResult(
                     success=True,
                     message="User retrieved successfully",
@@ -330,8 +331,8 @@ class AuthService:
                 error="no_user",
             )
         except Exception as exc:
-            # Fallback: decode JWT locally
-            logger.warning("Supabase get_user failed, falling back to JWT decode: %s", str(exc))
+            import traceback
+            logger.warning("Supabase get_user failed, falling back to JWT decode: %s\n%s", str(exc), traceback.format_exc())
             return await self.verify_token(access_token)
 
 

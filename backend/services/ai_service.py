@@ -7,40 +7,90 @@ for generating context-specific marketing intelligence when API keys are not act
 
 import logging
 import google.generativeai as genai
+from groq import Groq
+from openai import OpenAI
 from backend.config import get_settings
 
 logger = logging.getLogger("memoryos.ai")
 settings = get_settings()
 
 class AIService:
-    """Manages AI model interactions for content generation and strategic reporting."""
+    """Manages AI model interactions for content generation and strategic reporting with fallback support."""
 
     def __init__(self):
-        self.api_key = settings.GEMINI_API_KEY
-        self.has_real_key = bool(self.api_key and "placeholder" not in self.api_key.lower())
-        if self.has_real_key:
+        self.gemini_key = settings.GEMINI_API_KEY
+        self.groq_key = settings.GROQ_API_KEY
+        self.openrouter_key = settings.OPENROUTER_API_KEY
+        
+        self.has_gemini = bool(self.gemini_key and "placeholder" not in self.gemini_key.lower())
+        self.has_groq = bool(self.groq_key and "placeholder" not in self.groq_key.lower())
+        self.has_openrouter = bool(self.openrouter_key and "placeholder" not in self.openrouter_key.lower())
+        
+        if self.has_gemini:
             logger.info("Initializing Google Gemini API with configured key.")
-            genai.configure(api_key=self.api_key)
-        else:
-            logger.warning("No valid Gemini API key configured. Using local report-generator fallback.")
+            genai.configure(api_key=self.gemini_key)
+            
+        if self.has_groq:
+            logger.info("Initializing Groq API fallback.")
+            self.groq_client = Groq(api_key=self.groq_key)
+            
+        if self.has_openrouter:
+            logger.info("Initializing OpenRouter API final fallback.")
+            self.openrouter_client = OpenAI(
+                base_url="https://openrouter.ai/api/v1",
+                api_key=self.openrouter_key
+            )
+            
+        if not (self.has_gemini or self.has_groq or self.has_openrouter):
+            logger.warning("No valid AI API keys configured. Using local report-generator fallback.")
 
     async def health_check(self) -> bool:
         """Verify AI service is accessible."""
-        return self.has_real_key
+        return self.has_gemini or self.has_groq or self.has_openrouter
 
     async def generate_response(self, prompt: str) -> str:
-        """Generate a response using Gemini API, with a deterministic rule fallback."""
-        if self.has_real_key:
+        """Generate a response using failover: Gemini -> Groq -> OpenRouter -> Local."""
+        
+        # 1. Try Gemini
+        if self.has_gemini:
             try:
-                # Use the configured gemini model
                 model = genai.GenerativeModel(settings.GEMINI_MODEL)
                 response = model.generate_content(prompt)
                 if response and response.text:
+                    logger.info("Successfully used provider: Gemini")
                     return response.text.strip()
             except Exception as e:
-                logger.error("Gemini API call failed: %s. Falling back to local intelligence.", str(e))
+                logger.error("Gemini API call failed: %s. Falling back to Groq.", str(e))
+                
+        # 2. Try Groq
+        if self.has_groq:
+            try:
+                chat_completion = self.groq_client.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt}],
+                    model="llama-3.1-8b-instant",
+                )
+                if chat_completion.choices[0].message.content:
+                    logger.info("Successfully used provider: Groq")
+                    return chat_completion.choices[0].message.content.strip()
+            except Exception as e:
+                logger.error("Groq API call failed: %s. Falling back to OpenRouter.", str(e))
+                
+        # 3. Try OpenRouter
+        if self.has_openrouter:
+            try:
+                completion = self.openrouter_client.chat.completions.create(
+                    messages=[{"role": "user", "content": prompt}],
+                    model="anthropic/claude-3-haiku",
+                )
+                if completion.choices[0].message.content:
+                    logger.info("Successfully used provider: OpenRouter")
+                    return completion.choices[0].message.content.strip()
+            except Exception as e:
+                logger.error("OpenRouter API call failed: %s. Falling back to local intelligence.", str(e))
         
-        # Smart rule-based responses for local development when API key is missing
+        logger.info("Successfully used provider: Local Fallback")
+        
+        # 4. Smart rule-based responses for local development when API key is missing
         return self._generate_local_fallback_response(prompt)
 
     async def generate_marketing_report(self, report_type: str, company_name: str, metrics: dict) -> str:

@@ -15,24 +15,33 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let mounted = true;
+    console.log("[app-layout] Mounting, initial session state:", session);
 
     async function checkSession() {
+      console.log("[app-layout] checkSession called");
       try {
         const { data: { session }, error } = await supabase.auth.getSession();
+        console.log("[app-layout] checkSession getSession returned:", { session, error });
         if (error) throw error;
         
         if (mounted) {
+          console.log("[app-layout] Setting session state to:", session);
           setSession(session);
           setIsLoading(false);
           if (!session) {
+            console.log("[app-layout] checkSession triggered logout redirect because session is null");
             localStorage.removeItem("token");
             router.push("/login");
+          } else {
+            console.log("[app-layout] checkSession: session found, staying on dashboard");
           }
         }
       } catch (err) {
-        console.error("Session check failed:", err);
+        console.error("[app-layout] Session check failed:", err);
         if (mounted) {
           setIsLoading(false);
+          console.log("[app-layout] checkSession error triggered logout redirect");
+          localStorage.removeItem("token");
           router.push("/login");
         }
       }
@@ -41,11 +50,16 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     checkSession();
 
     // 2. Setup observer to handle dynamic logouts/expiry
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event: string, currentSession: any) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event: string, currentSession: any) => {
+      console.log(`[app-layout] onAuthStateChange event: ${event}, currentSession:`, currentSession);
       if (mounted) {
+        if (event === 'INITIAL_SESSION') {
+          return;
+        }
         setSession(currentSession);
         setIsLoading(false); // <--- CRITICAL FIX: Ensure loading spinner stops
         if (!currentSession) {
+          console.log("[app-layout] onAuthStateChange: no session, redirecting to /login");
           localStorage.removeItem("token");
           router.push("/login");
         }
@@ -53,6 +67,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     });
 
     return () => {
+      console.log("[app-layout] Unmounting");
       mounted = false;
       subscription.unsubscribe();
     };

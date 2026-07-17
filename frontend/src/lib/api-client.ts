@@ -24,7 +24,13 @@ apiClient.interceptors.response.use(
     if (error.response?.status === 401) {
       if (typeof window !== 'undefined') {
         localStorage.removeItem("token");
-        window.location.href = "/login";
+        // Sign out of Supabase to clear its internal storage, breaking the loop!
+        import("@/lib/supabase").then(({ supabase }) => {
+          supabase.auth.signOut().finally(() => {
+            console.log("[api-client] 401 Unauthorized received, redirecting to /login");
+            window.location.href = "/login";
+          });
+        });
       }
     }
     return Promise.reject(error);
