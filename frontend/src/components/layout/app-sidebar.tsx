@@ -35,6 +35,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 const mainNavigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "TalentGraph", href: "/talent-graph", icon: Sparkles },
   { name: "AI Assistant", href: "/chat", icon: Bot },
   { name: "Campaigns", href: "/campaigns", icon: Briefcase },
   { name: "Customers", href: "/customers", icon: Users },

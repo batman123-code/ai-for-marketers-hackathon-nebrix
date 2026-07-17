@@ -99,6 +99,7 @@ from backend.routes.chat import router as chat_router
 from backend.routes.analytics import router as analytics_router
 from backend.routes.reports import router as reports_router
 from backend.routes.customers import router as customers_router
+from backend.routes.graph import router as graph_router
 
 API_PREFIX = settings.API_PREFIX
 
@@ -109,6 +110,7 @@ app.include_router(chat_router, prefix=API_PREFIX)
 app.include_router(analytics_router, prefix=API_PREFIX)
 app.include_router(reports_router, prefix=API_PREFIX)
 app.include_router(customers_router, prefix=API_PREFIX)
+app.include_router(graph_router, prefix=API_PREFIX)
 
 # ---------------------------------------------------------------------------
 # Health Endpoint
